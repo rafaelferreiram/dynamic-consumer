@@ -6,17 +6,19 @@ import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KafkaConsumerConfig {
 
+	@Value("${kafka.bootstrapServer}")
 	private String bootstrapServer;
 
-	private String elasticSearchGroup;
-
+	@Value("${kafka.offset}")
 	private String earliestOffset;
 
+	@Value("${kafka.topic}")
 	private String topic;
 
 	public KafkaConsumer<String, String> createConsumer() {
@@ -25,7 +27,6 @@ public class KafkaConsumerConfig {
 		properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
 		properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 		properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-		properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, elasticSearchGroup);
 		properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, earliestOffset);
 		properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 		properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "200");
