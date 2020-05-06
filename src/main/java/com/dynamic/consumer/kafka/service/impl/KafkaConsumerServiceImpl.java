@@ -37,40 +37,42 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 		RestHighLevelClient client = elasticSearch.createClient();
 
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
-
-		while (true) {
-			ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-
-			int recordCounts = records.count();
-			logger.info("Received " + recordCounts + " records ");
-			BulkRequest bulkRequest = new BulkRequest();
-
-			for (ConsumerRecord<String, String> record : records) {
-
-				try {
-					logger.info(record.value());
-					String id = extractIdFromTweet(record.value());
-
-					IndexRequest indexRequest = new IndexRequest().index("twitter").type("tweets").id(id)
-							.source(record.value(), XContentType.JSON);
-
-					bulkRequest.add(indexRequest); // adding index request to the bulk
-				} catch (NullPointerException e) {
-					logger.warn("Skipping bad data :" + record.value());
+		
+		if(consumer!=null) {
+			while (true) {
+				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+				
+				int recordCounts = records.count();
+				logger.info("Received " + recordCounts + " records ");
+				BulkRequest bulkRequest = new BulkRequest();
+				
+				for (ConsumerRecord<String, String> record : records) {
+					
+					try {
+						logger.info(record.value());
+						String id = extractIdFromTweet(record.value());
+						
+						IndexRequest indexRequest = new IndexRequest().index("twitter").type("tweets").id(id)
+								.source(record.value(), XContentType.JSON);
+						
+						bulkRequest.add(indexRequest); // adding index request to the bulk
+					} catch (NullPointerException e) {
+						logger.warn("Skipping bad data :" + record.value());
+					}
+					
 				}
-
-			}
-
-			if (recordCounts > 0) {
-				BulkResponse bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
-				logger.info("Commiting offsets ...");
-				consumer.commitSync();
-				logger.info("Offsets Commited!");
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				
+				if (recordCounts > 0) {
+					BulkResponse bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+					logger.info("Commiting offsets ...");
+					consumer.commitSync();
+					logger.info("Offsets Commited!");
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}
