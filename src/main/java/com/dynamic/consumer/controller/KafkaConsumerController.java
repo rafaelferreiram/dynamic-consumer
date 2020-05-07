@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dynamic.consumer.kafka.service.KafkaConsumerService;
+import com.dynamic.consumer.kafka.consumer.async.KafkaConsumerServiceAsync;
 
 @RestController
 @RequestMapping("/consumer")
@@ -15,12 +15,12 @@ import com.dynamic.consumer.kafka.service.KafkaConsumerService;
 public class KafkaConsumerController {
 	
 	@Autowired
-	private KafkaConsumerService service;
+	private KafkaConsumerServiceAsync serviceAsync;
 
 	@GetMapping(value = "/activate")
 	public ResponseEntity<Object> activateConsumer(){
 		try {
-			service.activateConsumer();
+			serviceAsync.activateConsumer();
 			return ResponseEntity.ok().body("Consumer activated successfully");
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body("Error actvating consumer");
