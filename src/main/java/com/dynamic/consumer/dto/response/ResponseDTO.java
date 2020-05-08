@@ -11,6 +11,22 @@ public class ResponseDTO {
 		this.msg = msg;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -42,5 +58,4 @@ public class ResponseDTO {
 		return true;
 	}
 
-	
 }
