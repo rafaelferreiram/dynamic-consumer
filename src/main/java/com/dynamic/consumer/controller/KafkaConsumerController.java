@@ -22,7 +22,6 @@ public class KafkaConsumerController {
 	public ResponseEntity<Object> activateConsumer(){
 		try {
 			serviceAsync.activateConsumer();
-			//TODO Json return
 			return ResponseEntity.ok().body(new ResponseDTO("OK","Consumer activated successfully"));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(new ResponseDTO("ERROR","Error actvating consumer"));
