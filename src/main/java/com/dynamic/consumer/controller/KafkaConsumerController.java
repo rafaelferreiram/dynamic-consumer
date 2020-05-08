@@ -27,4 +27,14 @@ public class KafkaConsumerController {
 			return ResponseEntity.badRequest().body(new ResponseDTO("ERROR","Error actvating consumer"));
 		}
 	}
+	
+	@GetMapping(value = "/deactivate")
+	public ResponseEntity<Object> deactivateConsumer(){
+		try {
+			//TODO Deactivation
+			return ResponseEntity.ok().body(new ResponseDTO("OK","Consumer deactivated successfully"));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new ResponseDTO("ERROR","Error deactvating consumer"));
+		}
+	}
 }
