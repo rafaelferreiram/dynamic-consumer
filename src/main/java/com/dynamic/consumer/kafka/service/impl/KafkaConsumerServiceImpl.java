@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -55,7 +54,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 						IndexRequest indexRequest = new IndexRequest().index("twitter").type("tweets").id(id)
 								.source(record.value(), XContentType.JSON);
 						
-						bulkRequest.add(indexRequest); // adding index request to the bulk
+						bulkRequest.add(indexRequest);
 					} catch (NullPointerException e) {
 						logger.warn("Skipping bad data :" + record.value());
 					}
@@ -63,7 +62,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 				}
 				
 				if (recordCounts > 0) {
-					BulkResponse bulkResponse = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+					client.bulk(bulkRequest, RequestOptions.DEFAULT);
 					logger.info("Commiting offsets ...");
 					consumer.commitSync();
 					logger.info("Offsets Commited!");

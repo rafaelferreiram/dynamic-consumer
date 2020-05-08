@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dynamic.consumer.dto.response.ResponseDTO;
 import com.dynamic.consumer.kafka.consumer.async.KafkaConsumerServiceAsync;
 
 @RestController
@@ -21,9 +22,10 @@ public class KafkaConsumerController {
 	public ResponseEntity<Object> activateConsumer(){
 		try {
 			serviceAsync.activateConsumer();
-			return ResponseEntity.ok().body("Consumer activated successfully");
+			//TODO Json return
+			return ResponseEntity.ok().body(new ResponseDTO("OK","Consumer activated successfully"));
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body("Error actvating consumer");
+			return ResponseEntity.badRequest().body(new ResponseDTO("ERROR","Error actvating consumer"));
 		}
 	}
 }
