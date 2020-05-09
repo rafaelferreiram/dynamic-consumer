@@ -32,35 +32,37 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 	@Autowired
 	private ElasticSearch elasticSearch;
 
+	private Boolean ative;
+
 	public void activateConsumer() throws IOException {
 		RestHighLevelClient client = elasticSearch.createClient();
 
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
-		
-		if(consumer!=null) {
+
+		if (consumer != null && isAtive()) {
 			while (true) {
 				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-				
+
 				int recordCounts = records.count();
 				logger.info("Received " + recordCounts + " records ");
 				BulkRequest bulkRequest = new BulkRequest();
-				
+
 				for (ConsumerRecord<String, String> record : records) {
-					
+
 					try {
 						logger.info(record.value());
 						String id = extractIdFromTweet(record.value());
-						
+
 						IndexRequest indexRequest = new IndexRequest().index("twitter").type("tweets").id(id)
 								.source(record.value(), XContentType.JSON);
-						
+
 						bulkRequest.add(indexRequest);
 					} catch (NullPointerException e) {
 						logger.warn("Skipping bad data :" + record.value());
 					}
-					
+
 				}
-				
+
 				if (recordCounts > 0) {
 					client.bulk(bulkRequest, RequestOptions.DEFAULT);
 					logger.info("Commiting offsets ...");
@@ -74,14 +76,25 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 					}
 				}
 			}
+		} else {
+			consumer.close();
+			client.close();
+
 		}
 
-		// client.close();
 	}
 
-	private  String extractIdFromTweet(String tweetJson) {
+	private String extractIdFromTweet(String tweetJson) {
 		JsonParser jsonParser = new JsonParser();
 		return jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
+	}
+
+	public Boolean isAtive() {
+		return ative;
+	}
+
+	public void setAtive(Boolean ative) {
+		this.ative = ative;
 	}
 
 }
