@@ -28,6 +28,7 @@ public class KafkaConsumerServiceAsync {
 		}
 	}
 
+	@Async
 	public void deactivateConsumer() {
 		try {
 			service.setActive(false);

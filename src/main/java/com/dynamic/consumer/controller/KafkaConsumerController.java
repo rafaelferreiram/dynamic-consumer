@@ -31,7 +31,7 @@ public class KafkaConsumerController {
 	@GetMapping(value = "/deactivate")
 	public ResponseEntity<Object> deactivateConsumer(){
 		try {
-			//TODO Deactivation
+			serviceAsync.deactivateConsumer();
 			return ResponseEntity.ok().body(new ResponseDTO("OK","Consumer deactivated successfully"));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(new ResponseDTO("ERROR","Error deactvating consumer"));
