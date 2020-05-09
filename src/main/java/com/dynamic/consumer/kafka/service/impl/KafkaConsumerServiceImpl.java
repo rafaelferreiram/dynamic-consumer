@@ -32,14 +32,14 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 	@Autowired
 	private ElasticSearch elasticSearch;
 
-	private Boolean ative;
+	private Boolean active;
 
 	public void activateConsumer() throws IOException {
 		RestHighLevelClient client = elasticSearch.createClient();
 
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
 
-		if (consumer != null && isAtive()) {
+		if (consumer != null && isActive()) {
 			while (true) {
 				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
@@ -89,12 +89,13 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 		return jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
 	}
 
-	public Boolean isAtive() {
-		return ative;
+	public Boolean isActive() {
+		return active;
 	}
 
-	public void setAtive(Boolean ative) {
-		this.ative = ative;
+	public void setActive(boolean active) {
+		this.active = active;
+
 	}
 
 }
