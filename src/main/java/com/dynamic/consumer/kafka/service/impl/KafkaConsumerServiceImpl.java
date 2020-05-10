@@ -47,21 +47,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 				logger.info("Received " + recordCounts + " records ");
 				BulkRequest bulkRequest = new BulkRequest();
 
-				for (ConsumerRecord<String, String> record : records) {
-
-					try {
-						logger.info(record.value());
-						String id = extractIdFromTweet(record.value());
-
-						IndexRequest indexRequest = new IndexRequest().index("twitter").type("tweets").id(id)
-								.source(record.value(), XContentType.JSON);
-
-						bulkRequest.add(indexRequest);
-					} catch (NullPointerException e) {
-						logger.warn("Skipping bad data :" + record.value());
-					}
-
-				}
+				populateBulkWithKafkaConsumerData(records, bulkRequest);
 
 				if (recordCounts > 0) {
 					client.bulk(bulkRequest, RequestOptions.DEFAULT);
@@ -76,17 +62,40 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 				}
 			}
 		}
+		closeConnections(consumer, client);
+	}
+
+	private void populateBulkWithKafkaConsumerData(ConsumerRecords<String, String> records, BulkRequest bulkRequest) {
+		for (ConsumerRecord<String, String> record : records) {
+
+			try {
+				logger.info(record.value());
+				String id = extractIdFromTweet(record.value());
+
+				IndexRequest indexRequest = new IndexRequest().index("twitter").type("tweets").id(id)
+						.source(record.value(), XContentType.JSON);
+
+				bulkRequest.add(indexRequest);
+			} catch (NullPointerException e) {
+				logger.warn("Skipping bad data :" + record.value());
+			}
+		}
+	}
+
+	private String extractIdFromTweet(String tweetJson) {
+		JsonParser jsonParser = new JsonParser();
+		return jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
+	}
+
+	private void closeConnections(KafkaConsumer<String, String> consumer, RestHighLevelClient client)
+			throws IOException {
 		logger.info("Closing connection with Kafka Consumer ...");
 		consumer.close();
 		logger.info("Connection with Kafka Consumer closed. ");
 		logger.info("Closing connection with client ...");
 		client.close();
 		logger.info("Connection with client closed. ");
-	}
 
-	private String extractIdFromTweet(String tweetJson) {
-		JsonParser jsonParser = new JsonParser();
-		return jsonParser.parse(tweetJson).getAsJsonObject().get("id_str").getAsString();
 	}
 
 	public Boolean isActive() {
