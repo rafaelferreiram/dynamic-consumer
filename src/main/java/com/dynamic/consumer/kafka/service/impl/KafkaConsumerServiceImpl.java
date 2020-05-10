@@ -39,8 +39,8 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
 
-		if (consumer != null && isActive()) {
-			while (true) {
+		if (consumer != null) {
+			while (true && isActive()) {
 				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
 				int recordCounts = records.count();
@@ -75,12 +75,13 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 					}
 				}
 			}
-		} else {
-			consumer.close();
-			client.close();
-
 		}
-
+		logger.info("Closing connection with Kafka Consumer ...");
+		consumer.close();
+		logger.info("Connection with Kafka Consumer closed. ");
+		logger.info("Closing connection with client ...");
+		client.close();
+		logger.info("Connection with client closed. ");
 	}
 
 	private String extractIdFromTweet(String tweetJson) {
