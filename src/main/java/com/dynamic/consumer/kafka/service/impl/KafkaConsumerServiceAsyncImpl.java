@@ -1,4 +1,4 @@
-package com.dynamic.consumer.kafka.consumer.async;
+package com.dynamic.consumer.kafka.service.impl;
 
 import java.io.IOException;
 
@@ -9,11 +9,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.dynamic.consumer.kafka.service.KafkaConsumerService;
+import com.dynamic.consumer.kafka.service.KafkaConsumerServiceAsync;
 
 @Component
-public class KafkaConsumerServiceAsync {
-
-	Logger logger = LoggerFactory.getLogger(KafkaConsumerServiceAsync.class);
+public class KafkaConsumerServiceAsyncImpl implements KafkaConsumerServiceAsync {
+	
+	Logger logger = LoggerFactory.getLogger(KafkaConsumerServiceAsyncImpl.class);
 
 	@Autowired
 	private KafkaConsumerService service;

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dynamic.consumer.dto.response.ResponseDTO;
-import com.dynamic.consumer.kafka.consumer.async.KafkaConsumerServiceAsync;
+import com.dynamic.consumer.kafka.service.KafkaConsumerServiceAsync;
 
 @RestController
 @RequestMapping("/consumer")
