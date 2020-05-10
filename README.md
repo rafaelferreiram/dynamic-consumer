@@ -7,3 +7,9 @@ Kafka consumer application that will consume data produced by the [dynamic](http
 - Java 11
 - Kafka
 - ElasticSearch
+
+## Swagger 
+
+```bash
+http://localhost:8081/dynamic-consumer/swagger-ui.html
+```
