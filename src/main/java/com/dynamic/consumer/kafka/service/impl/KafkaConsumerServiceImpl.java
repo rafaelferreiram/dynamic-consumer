@@ -35,34 +35,40 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 	private Boolean active;
 
 	public void activateConsumer() throws IOException {
+		
 		RestHighLevelClient client = elasticSearch.createClient();
-
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
 
 		if (consumer != null) {
 			while (isActive()) {
 				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-
 				int recordCounts = records.count();
+
 				logger.info("Received " + recordCounts + " records ");
 				BulkRequest bulkRequest = new BulkRequest();
 
 				populateBulkWithKafkaConsumerData(records, bulkRequest);
 
-				if (recordCounts > 0) {
-					client.bulk(bulkRequest, RequestOptions.DEFAULT);
-					logger.info("Commiting offsets ...");
-					consumer.commitSync();
-					logger.info("Offsets Commited!");
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				commitClienBulk(recordCounts, client, consumer, bulkRequest);
+
 			}
 		}
 		closeConnections(consumer, client);
+	}
+
+	private void commitClienBulk(int recordCounts, RestHighLevelClient client, KafkaConsumer<String, String> consumer,
+			BulkRequest bulkRequest) throws IOException {
+		if (recordCounts > 0) {
+			client.bulk(bulkRequest, RequestOptions.DEFAULT);
+			logger.info("Commiting offsets ...");
+			consumer.commitSync();
+			logger.info("Offsets Commited!");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void populateBulkWithKafkaConsumerData(ConsumerRecords<String, String> records, BulkRequest bulkRequest) {
