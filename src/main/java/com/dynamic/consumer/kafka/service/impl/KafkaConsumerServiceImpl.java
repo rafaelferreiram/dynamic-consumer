@@ -40,7 +40,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
 
 		if (consumer != null) {
-			while (true && isActive()) {
+			while (isActive()) {
 				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
 				int recordCounts = records.count();
