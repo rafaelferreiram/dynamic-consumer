@@ -37,4 +37,8 @@ public class KafkaConsumerController {
 			return ResponseEntity.badRequest().body(new ResponseDTO("ERROR", "Error deactvating consumer"));
 		}
 	}
+
+	public KafkaConsumerController(KafkaConsumerServiceAsync kafkaConsumerServiceAsync) {
+		this.serviceAsync = kafkaConsumerServiceAsync;
+	}
 }
