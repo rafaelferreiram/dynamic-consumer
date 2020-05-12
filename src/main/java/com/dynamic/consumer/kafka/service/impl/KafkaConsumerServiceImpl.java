@@ -35,7 +35,7 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 	private Boolean active;
 
 	public void activateConsumer() throws IOException {
-		
+
 		RestHighLevelClient client = elasticSearch.createClient();
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
 
@@ -48,7 +48,6 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 				BulkRequest bulkRequest = new BulkRequest();
 
 				populateBulkWithKafkaConsumerData(records, bulkRequest);
-
 				commitClienBulk(recordCounts, client, consumer, bulkRequest);
 
 			}
