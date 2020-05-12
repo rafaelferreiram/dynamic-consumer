@@ -28,7 +28,6 @@ public class KafkaConsumerControllerTest {
 
 	private MockMvc mockMvc;
 
-	private static final int BAD_REQUEST = 400;
 	private static final int STATUS_OK = 200;
 	Gson gson;
 
