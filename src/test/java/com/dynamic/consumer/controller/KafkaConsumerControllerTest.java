@@ -51,6 +51,22 @@ public class KafkaConsumerControllerTest {
 		assertEquals(STATUS_OK, response.getResponse().getStatus());
 		assertEquals(expectedJsonResponse, response.getResponse().getContentAsString());
 	}
+	
+	@Test
+	public void shouldDectivateSuccessfully() throws Exception {
+		ResponseDTO expectedResponse = populateSuccessDeactivationResponse();
+		String expectedJsonResponse = gson.toJson(expectedResponse);
+
+		MvcResult response = this.mockMvc.perform(get("/consumer/deactivate").contentType(APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isOk()).andReturn();
+
+		assertEquals(STATUS_OK, response.getResponse().getStatus());
+		assertEquals(expectedJsonResponse, response.getResponse().getContentAsString());
+	}
+
+	private ResponseDTO populateSuccessDeactivationResponse() {
+		return new ResponseDTO("OK", "Consumer deactivated successfully");
+	}
 
 	private ResponseDTO populateSuccessResponse() {
 		return new ResponseDTO("OK", "Consumer activated successfully");
