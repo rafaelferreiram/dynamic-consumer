@@ -39,18 +39,21 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 		RestHighLevelClient client = elasticSearch.createClient();
 		KafkaConsumer<String, String> consumer = consumerConfig.createConsumer();
 
-		if (consumer != null) {
-			while (isActive()) {
-				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-				int recordCounts = records.count();
+		if (consumer == null) {
+			logger.error("Error while setting up Kafka Consumer.");
+			return;
+		}
+		
+		while (isActive()) {
+			ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+			int recordCounts = records.count();
 
-				logger.info("Received " + recordCounts + " records ");
-				BulkRequest bulkRequest = new BulkRequest();
+			logger.info("Received " + recordCounts + " records ");
+			BulkRequest bulkRequest = new BulkRequest();
 
-				populateBulkWithKafkaConsumerData(records, bulkRequest);
-				commitClienBulk(recordCounts, client, consumer, bulkRequest);
+			populateBulkWithKafkaConsumerData(records, bulkRequest);
+			commitClienBulk(recordCounts, client, consumer, bulkRequest);
 
-			}
 		}
 		closeConnections(consumer, client);
 	}
