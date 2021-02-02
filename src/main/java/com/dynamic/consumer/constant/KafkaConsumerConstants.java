@@ -17,7 +17,9 @@ public class KafkaConsumerConstants {
 	@Value("${kafka.groupid}")
 	public static String elasticSearchGroup;
 	
-	public static String maxPollSize = "200";
-
-	public static String autoCommitConfig = "false";
+	@Value("${kafka.max.poll.size}")
+	public static String maxPollSize;
+	
+	@Value("{kafka.auto.commit.config}")
+	public static String autoCommitConfig;
 }
